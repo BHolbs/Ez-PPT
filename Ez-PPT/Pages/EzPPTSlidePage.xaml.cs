@@ -21,6 +21,8 @@ using Powerpoint = Microsoft.Office.Interop.PowerPoint;
 
 using Ez_PPT.Classes;
 using Ez_PPT.Windows;
+using Microsoft.Office.Interop.PowerPoint;
+using Application = Microsoft.Office.Interop.PowerPoint.Application;
 
 namespace Ez_PPT.Pages
 {
@@ -47,6 +49,7 @@ namespace Ez_PPT.Pages
 			// Opens a new window containing pictures found, probably ListBox or ListView, user can select up to 2 images per slide (more than 2 would be pretty difficult to prevent from getting clumpy
 			// When user confirms images, save those images to some data structure containing the current ppt info by slide for use by the Finish handler
 			// Populate a label with preview images or some count of how many objects have been selected for that page
+
 			this.urls = new List<String>
 			{
 				"https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRRAD9dz6lOsZgew3MS2IgfqykAhOR5Ds9oxw&usqp=CAU",
@@ -81,8 +84,28 @@ namespace Ez_PPT.Pages
 
 		private void Finish_Button_Click(object sender, RoutedEventArgs e)
 		{
-			// Actually create the ppt here.
-			// I have a feeling this will be the hardest part.
+			Application application = new Application();
+
+			Slides slides;
+			_Slide slide;
+			Microsoft.Office.Interop.PowerPoint.TextRange objText;
+
+			Presentation pptPresentation = application.Presentations.Add(Microsoft.Office.Core.MsoTriState.msoTrue);
+			CustomLayout customLayout = pptPresentation.SlideMaster.CustomLayouts[PpSlideLayout.ppLayoutText];
+
+			slides = pptPresentation.Slides;
+			slide = slides.AddSlide(1, customLayout);
+
+			objText = slide.Shapes[1].TextFrame.TextRange;
+			objText.Text = "Test Title";
+			objText.Font.Name = "Arial";
+			objText.Font.Size = 32;
+
+			objText = slide.Shapes[2].TextFrame.TextRange;
+			objText.Text = "Content Content Content\nContent\nContent";
+
+			slide.NotesPage.Shapes[2].TextFrame.TextRange.Text = "This is a demo.";
+			pptPresentation.SaveAs(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"/test.pptx", Microsoft.Office.Interop.PowerPoint.PpSaveAsFileType.ppSaveAsDefault, Microsoft.Office.Core.MsoTriState.msoTrue);
 		}
 	}
 }
