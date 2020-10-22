@@ -37,8 +37,11 @@ namespace Ez_PPT.Windows
 
 		private void Confirm_Finish_Button_Click(object sender, RoutedEventArgs e)
 		{
-			//Add the page we were on to the list.
-			SlideInfoCollection.GetInstance().AddToCollection(this.slideWhenPressed);
+			//Add the page we were on to the list, unless it's totally empty
+			if (this.slideWhenPressed.text != null || this.slideWhenPressed.title != null ||  this.slideWhenPressed.imageURLs.Count != 0)
+			{
+				SlideInfoCollection.GetInstance().AddToCollection(this.slideWhenPressed);
+			}
 			//Fetch our list of slides
 			List<SlideInfo> slideInfo = SlideInfoCollection.GetInstance().GetList();
 			//Spin up PPT.

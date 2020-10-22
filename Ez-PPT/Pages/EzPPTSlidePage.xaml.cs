@@ -40,15 +40,9 @@ namespace Ez_PPT.Pages
 
 		private void Search_Button_Click(object sender, RoutedEventArgs e)
 		{
-			// Eventually this will actually perform a google image search, for now, let's hold onto some canned URLS (5 will probably fit the use case for now)
-
-			// Opens a new window containing pictures found, probably ListBox or ListView, user can select up to 2 images per slide (more than 2 would be pretty difficult to prevent from getting clumpy
-			// When user confirms images, save those images to some data structure containing the current ppt info by slide for use by the Finish handler
-			// Populate a label with preview images or some count of how many objects have been selected for that page
-
+			// Set up the custom search service then execute the query
 			string apiKey = "AIzaSyC9XZlQmVl7c5N-lGnm9YlTlFZkxTjKiRI";
 			string context = "47c96d1ee9214d539";
-
 			var customSearchService = new CustomsearchService(new BaseClientService.Initializer { ApiKey = apiKey });
 			string query = this.title.Text + " " + this.text.Text;
 			var listRequest = customSearchService.Cse.List();
@@ -59,11 +53,14 @@ namespace Ez_PPT.Pages
 			listRequest.Safe = CseResource.ListRequest.SafeEnum.Active;
 			var result = listRequest.Execute().Items?.ToList();
 
+			//Add the image URLs to a list
 			foreach(var item in result)
 			{
 				this.urls.Add(item.Link.ToString());
 			}
 
+			// Fire off a search results window. Made this choice to make searching more deliberate, the Google CSE API is pretty restrictive, about 100 requests/day
+			// Making a box that would autoupdate as the user typed would use that rate up pretty quickly.
 			SearchResultsWindow searchResultsWindow = new SearchResultsWindow(this.urls, ref currentSlideInfo);
 			searchResultsWindow.Show();
 		}
