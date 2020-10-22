@@ -77,6 +77,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Windows\ConfirmCancelWindow.xaml.cs">
+      <DependentUpon>ConfirmCancelWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\ConfirmFinishedWindow.xaml.cs">
+      <DependentUpon>ConfirmFinishedWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\SearchResultsWindow.xaml.cs">
       <DependentUpon>SearchResultsWindow.xaml</DependentUpon>
     </Compile>
@@ -94,15 +100,19 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Pages\EzPPTFinishPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Pages\EzPPTHomePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\EzPPTSlidePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\ConfirmCancelWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\ConfirmFinishedWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -112,9 +122,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Pages\EzPPTFinishPage.xaml.cs">
-      <DependentUpon>EzPPTFinishPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Pages\EzPPTHomePage.xaml.cs">
       <DependentUpon>EzPPTHomePage.xaml</DependentUpon>
     </Compile>

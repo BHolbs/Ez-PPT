@@ -35,7 +35,7 @@ namespace Ez_PPT.Windows
 				img.UriSource = new Uri(url, UriKind.RelativeOrAbsolute);
 				img.CacheOption = BitmapCacheOption.OnLoad;
 				img.EndInit();
-				this.ImageList.Items.Add(new Image { Source = img, MaxHeight=500, MaxWidth=500, Margin=new System.Windows.Thickness(2) });
+				this.ImageList.Items.Add(new Image { Source = img, MaxHeight=500, MaxWidth=500, Margin=new Thickness(2) });
 			}
 
 			if (this.ImageList.Items.IsEmpty)
@@ -55,6 +55,7 @@ namespace Ez_PPT.Windows
 			int count = 0;
 			foreach (Image item in this.ImageList.SelectedItems)
 			{
+				si.ClearImageUrls();
 				si.AddToImageURLs(item.Source.ToString());
 				count++;
 			}

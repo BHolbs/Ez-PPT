@@ -37,6 +37,11 @@ namespace Ez_PPT.Classes
 			Slides[index] = slideInfo;
 		}
 
+		public List<SlideInfo> GetList()
+		{
+			return new List<SlideInfo>(Slides);
+		}
+
 		public int NumberOfSlides()
 		{
 			return Slides.Count;

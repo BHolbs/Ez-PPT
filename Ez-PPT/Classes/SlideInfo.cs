@@ -28,5 +28,10 @@ namespace Ez_PPT.Classes
 		{
 			this.imageURLs.Add(url);
 		}
+
+		public void ClearImageUrls()
+		{
+			this.imageURLs = new List<String>();
+		}
 	}
 }

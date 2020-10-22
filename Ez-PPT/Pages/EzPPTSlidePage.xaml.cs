@@ -16,13 +16,9 @@ using System.Windows.Shapes;
 // FOR PERFORMING GOOGLE IMAGE SEARCHES
 using Google.Apis.Customsearch.v1;
 
-// FOR BUILDING THE .PPT
-using Powerpoint = Microsoft.Office.Interop.PowerPoint;
-
 using Ez_PPT.Classes;
 using Ez_PPT.Windows;
-using Microsoft.Office.Interop.PowerPoint;
-using Application = Microsoft.Office.Interop.PowerPoint.Application;
+using Google.Apis.Services;
 
 namespace Ez_PPT.Pages
 {
@@ -50,12 +46,24 @@ namespace Ez_PPT.Pages
 			// When user confirms images, save those images to some data structure containing the current ppt info by slide for use by the Finish handler
 			// Populate a label with preview images or some count of how many objects have been selected for that page
 
-			this.urls = new List<String>
+			string apiKey = "AIzaSyC9XZlQmVl7c5N-lGnm9YlTlFZkxTjKiRI";
+			string context = "47c96d1ee9214d539";
+
+			var customSearchService = new CustomsearchService(new BaseClientService.Initializer { ApiKey = apiKey });
+			string query = this.title.Text + " " + this.text.Text;
+			var listRequest = customSearchService.Cse.List();
+			listRequest.Cx = context;
+			listRequest.Q = query;
+			listRequest.Num = 10;
+			listRequest.SearchType = CseResource.ListRequest.SearchTypeEnum.Image;
+			listRequest.Safe = CseResource.ListRequest.SafeEnum.Active;
+			var result = listRequest.Execute().Items?.ToList();
+
+			foreach(var item in result)
 			{
-				"https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRRAD9dz6lOsZgew3MS2IgfqykAhOR5Ds9oxw&usqp=CAU",
-				"https://www.gematsu.com/wp-content/uploads/2020/07/Sekiro-Update_07-29-20_001.jpg",
-				"https://d3tidaycr45ky4.cloudfront.net/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/e/l/elite-dangerous.jpg"
-			};
+				this.urls.Add(item.Link.ToString());
+			}
+
 			SearchResultsWindow searchResultsWindow = new SearchResultsWindow(this.urls, ref currentSlideInfo);
 			searchResultsWindow.Show();
 		}
@@ -63,7 +71,7 @@ namespace Ez_PPT.Pages
 		private void Next_Button_Click(object sender, RoutedEventArgs e)
 		{
 			currentSlideInfo.title = this.title.Text;
-			currentSlideInfo.title = this.text.Text;
+			currentSlideInfo.text = this.text.Text;
 			if (SlideInfoCollection.GetInstance().NumberOfSlides() <= index)
 			{
 				SlideInfoCollection.GetInstance().AddToCollection(currentSlideInfo);
@@ -78,34 +86,16 @@ namespace Ez_PPT.Pages
 
 		private void Cancel_Button_Click(object sender, RoutedEventArgs e)
 		{
-			// Load a confirm page, if they confirm then give option to restart or exit.
-			// This should be pretty easy, save it for last.
+			ConfirmCancelWindow confirmCancelWindow = new ConfirmCancelWindow();
+			confirmCancelWindow.Show();
 		}
 
 		private void Finish_Button_Click(object sender, RoutedEventArgs e)
 		{
-			Application application = new Application();
-
-			Slides slides;
-			_Slide slide;
-			Microsoft.Office.Interop.PowerPoint.TextRange objText;
-
-			Presentation pptPresentation = application.Presentations.Add(Microsoft.Office.Core.MsoTriState.msoTrue);
-			CustomLayout customLayout = pptPresentation.SlideMaster.CustomLayouts[PpSlideLayout.ppLayoutText];
-
-			slides = pptPresentation.Slides;
-			slide = slides.AddSlide(1, customLayout);
-
-			objText = slide.Shapes[1].TextFrame.TextRange;
-			objText.Text = "Test Title";
-			objText.Font.Name = "Arial";
-			objText.Font.Size = 32;
-
-			objText = slide.Shapes[2].TextFrame.TextRange;
-			objText.Text = "Content Content Content\nContent\nContent";
-
-			slide.NotesPage.Shapes[2].TextFrame.TextRange.Text = "This is a demo.";
-			pptPresentation.SaveAs(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"/test.pptx", Microsoft.Office.Interop.PowerPoint.PpSaveAsFileType.ppSaveAsDefault, Microsoft.Office.Core.MsoTriState.msoTrue);
+			// Offload the ppt generation to a new confirm window. 
+			// This will also quit out of this application once the ppt gets generated and saved, so we should let the user know about that.
+			ConfirmFinishedWindow confirmFinishedWindow = new ConfirmFinishedWindow(currentSlideInfo);
+			confirmFinishedWindow.Show();
 		}
 	}
 }

@@ -34,7 +34,7 @@ namespace Ez_PPT.Pages
 			EzPPTSlidePage ezPPTSlidePage = new EzPPTSlidePage(index);
 			this.NavigationService.Navigate(ezPPTSlidePage);
 			// no images on title page, just text
-			SlideInfo slideInfo = new SlideInfo(this.title.Text, this.subtitle.Text, null);
+			SlideInfo slideInfo = new SlideInfo(this.title.Text, this.subtitle.Text, new List<String>());
 			SlideInfoCollection.GetInstance().AddToCollection(slideInfo);
 		}
 	}
