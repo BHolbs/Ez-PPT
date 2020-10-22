@@ -24,7 +24,7 @@
             <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
 
-        <TextBlock TextWrapping="WrapWithOverflow" Grid.Column="0" Grid.Row="0">Please specify the title of your PowerPoint presentation and a subtitle. The title of your presentation will also be the name of the PPT file.</TextBlock>
+        <TextBlock TextWrapping="WrapWithOverflow" Grid.Column="0" Grid.Row="0"><Run Text="Please specify the title of your PowerPoint presentation and a subtitle. "/><LineBreak/><Run/><LineBreak/><Run Text="The title of your presentation will also be the name of the PPT file."/></TextBlock>
         <Label Grid.Column="0" Grid.Row="1">Title:</Label>
         <TextBox Grid.Column="0" Grid.Row="2" Name="title"></TextBox>
         <Label Grid.Column="0" Grid.Row="4">Subtitle:</Label>
