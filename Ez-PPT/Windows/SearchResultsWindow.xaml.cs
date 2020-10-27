@@ -53,9 +53,9 @@ namespace Ez_PPT.Windows
 		private void Confirm_Button_Click(object sender, RoutedEventArgs e)
 		{
 			int count = 0;
+			si.ClearImageUrls();
 			foreach (Image item in this.ImageList.SelectedItems)
 			{
-				si.ClearImageUrls();
 				si.AddToImageURLs(item.Source.ToString());
 				count++;
 			}

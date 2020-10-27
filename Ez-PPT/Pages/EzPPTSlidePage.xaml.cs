@@ -44,7 +44,7 @@ namespace Ez_PPT.Pages
 			string apiKey = "AIzaSyC9XZlQmVl7c5N-lGnm9YlTlFZkxTjKiRI";
 			string context = "47c96d1ee9214d539";
 			var customSearchService = new CustomsearchService(new BaseClientService.Initializer { ApiKey = apiKey });
-			string query = this.title.Text + " " + this.text.Text;
+			string query = ComposeQuery();
 			var listRequest = customSearchService.Cse.List();
 			listRequest.Cx = context;
 			listRequest.Q = query;
@@ -91,8 +91,52 @@ namespace Ez_PPT.Pages
 		{
 			// Offload the ppt generation to a new confirm window. 
 			// This will also quit out of this application once the ppt gets generated and saved, so we should let the user know about that.
+			currentSlideInfo.title = this.title.Text;
+			currentSlideInfo.text = this.text.Text;
 			ConfirmFinishedWindow confirmFinishedWindow = new ConfirmFinishedWindow(currentSlideInfo);
 			confirmFinishedWindow.Show();
+		}
+
+		private string ComposeQuery()
+		{
+			List<string> boldWords = GetBoldWords();
+			string query = this.title.Text + " ";
+			foreach(string word in boldWords)
+			{
+				query = query + word + " ";
+			}
+
+			return query;
+		}
+
+		private List<string> GetBoldWords()
+		{
+			List<string> outList = new List<string>();
+			string[] tokens = this.text.Text.Split(' ');
+
+			//since interop indexes their words with starting at 1 indexing, let's start at 1
+			int i = 1;
+			bool wordIsBolded = false;
+			foreach (var token in tokens)
+			{
+				if (token.StartsWith("**"))
+				{
+					wordIsBolded = true;
+				}
+
+				if (wordIsBolded)
+				{
+					outList.Add(token.Replace("**", ""));
+				}
+
+				if (token.EndsWith("**"))
+				{
+					wordIsBolded = false;
+				}
+				i++;
+			}
+
+			return outList;
 		}
 	}
 }

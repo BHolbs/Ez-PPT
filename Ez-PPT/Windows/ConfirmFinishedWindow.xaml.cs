@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,6 +16,7 @@ using Ez_PPT.Classes;
 using Microsoft.Office.Core;
 using Microsoft.Office.Interop.PowerPoint;
 using Application = Microsoft.Office.Interop.PowerPoint.Application;
+using TextRange = Microsoft.Office.Interop.PowerPoint.TextRange;
 
 namespace Ez_PPT.Windows
 {
@@ -50,7 +52,6 @@ namespace Ez_PPT.Windows
 			//These represent the array of slides, the individual slide we are editing, and the area of text we're dealing with.
 			Slides slides;
 			_Slide slide;
-			Microsoft.Office.Interop.PowerPoint.TextRange objText;
 
 			//Open a new presentation, fetch the title page. We'll stitch together the first one by hand before a loop.
 			Presentation pptPresentation = application.Presentations.Add(MsoTriState.msoTrue);
@@ -95,16 +96,31 @@ namespace Ez_PPT.Windows
 				slide = slides.AddSlide(i, customLayout);
 				slide.Shapes[1].TextFrame.TextRange.Text = info.title;
 
-				//Add info specific to the slide layout
+				/*
+				 * There is a lot of duplicated code living here.
+				 * The way that interop is set up, you can't pass these TextRanges as ref in functions,
+				 * so I can't do this in a nice function call, I have to do it here.
+				 */
+				List<int> boldWordIndexes = new List<int>();
 				switch (numOfPictures)
 				{
 					case 0:
+						boldWordIndexes = GetIndicesOfBold(info.text);
+						info.text = info.text.Replace("**", "");
 						slide.Shapes[2].TextFrame.TextRange.Text = info.text;
+						foreach(int boldIndex in boldWordIndexes)
+						{
+							slide.Shapes[2].TextFrame.TextRange.Words(boldIndex).Font.Bold = MsoTriState.msoTrue;
+						}
 						break;
 					case 1:
-						objText = slide.Shapes[3].TextFrame.TextRange;
-						objText.Text = info.text;
-
+						boldWordIndexes = GetIndicesOfBold(info.text);
+						info.text = info.text.Replace("**", "");
+						slide.Shapes[3].TextFrame.TextRange.Text = info.text;
+						foreach (int boldIndex in boldWordIndexes)
+						{
+							slide.Shapes[3].TextFrame.TextRange.Words(boldIndex).Font.Bold = MsoTriState.msoTrue;
+						}
 						var shape = slide.Shapes[2];
 						slide.Shapes.AddPicture(info.imageURLs[0], MsoTriState.msoFalse, MsoTriState.msoTrue, shape.Left, shape.Top, shape.Width, shape.Height);
 
@@ -114,14 +130,24 @@ namespace Ez_PPT.Windows
 						//split input on double newline
 						string[] separators = { "\r\n\r\n" };
 						string[] textArr = info.text.Split(separators, StringSplitOptions.RemoveEmptyEntries);
-						slide.Shapes[2].TextFrame.TextRange.Text = textArr[0];
+						boldWordIndexes = GetIndicesOfBold(textArr[0]);
+						slide.Shapes[2].TextFrame.TextRange.Text = textArr[0].Replace("**", "");
+						foreach (int boldIndex in boldWordIndexes)
+						{
+							slide.Shapes[2].TextFrame.TextRange.Words(boldIndex).Font.Bold = MsoTriState.msoTrue;
+						}
 						if (textArr.Length <= 1)
 						{
 							slide.Shapes[4].TextFrame.TextRange.Text = " ";
 						}
 						else
 						{
-							slide.Shapes[4].TextFrame.TextRange.Text = textArr[1];
+							boldWordIndexes = GetIndicesOfBold(textArr[1]);
+							slide.Shapes[4].TextFrame.TextRange.Text = textArr[1].Replace("**", "");
+							foreach (int boldIndex in boldWordIndexes)
+							{
+								slide.Shapes[4].TextFrame.TextRange.Words(boldIndex).Font.Bold = MsoTriState.msoTrue;
+							}
 						}
 
 						var shapeAddingTo = slide.Shapes[3];
@@ -139,6 +165,36 @@ namespace Ez_PPT.Windows
 			pptPresentation.SaveAs(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "/" + slideInfo[0].title +  @".pptx", Microsoft.Office.Interop.PowerPoint.PpSaveAsFileType.ppSaveAsDefault, Microsoft.Office.Core.MsoTriState.msoTrue);
 
 			System.Windows.Application.Current.Shutdown();
+		}
+
+		public List<int> GetIndicesOfBold(string text)
+		{
+			List<int> outList = new List<int>();
+			string[] tokens = text.Split(' ');
+
+			//since interop indexes their words with starting at 1 indexing, let's start at 1
+			int i = 1;
+			bool wordIsBolded = false;
+			foreach(var token in tokens)
+			{
+				if (token.StartsWith("**"))
+				{
+					wordIsBolded = true;
+				}
+
+				if (wordIsBolded)
+				{
+					outList.Add(i);
+				}
+
+				if (token.EndsWith("**"))
+				{
+					wordIsBolded = false;
+				}
+				i++;
+			}
+			
+			return outList;
 		}
 	}
 }

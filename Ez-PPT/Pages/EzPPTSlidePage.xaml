@@ -31,7 +31,8 @@
         
         <Label Grid.Column="0" Grid.Row="1">Title:</Label>
         <TextBox Grid.Column="0" Grid.Row="2" x:Name="title" ToolTip="The title of the slide."/>
-        <Label Grid.Column="0" Grid.Row="4">Text Content:</Label>
+        <!-- Something with Rich Text would probably be more fully fleshed, but in the interest of expediency, let's just use markdown.-->
+        <TextBlock Grid.Column="0" Grid.Row="4" TextWrapping="WrapWithOverflow"><Run Text="Text Content: "/><LineBreak/><Run Text="(Mark text as bold with Markdown, ie **text** will be inserted as bold.)"/></TextBlock>
         <TextBox Grid.Column="0" Grid.Row="5" TextWrapping="WrapWithOverflow" AcceptsReturn="True" VerticalScrollBarVisibility="Visible" Name="text" ToolTip="If you have two images selected for this slide, separate the text here with one blank line, the text below the line will go over the second photo."></TextBox>
 
         <TextBlock Grid.Column="1" Grid.Row="5" TextWrapping="WrapWithOverflow" Margin="5,5,5,5">If you've come back and made changes, press the Next button instead of the forward arrow, or your changes won't show up in the finished presentation!</TextBlock>
