@@ -7,8 +7,6 @@ A WPF tool to scaffold a PowerPoint presentation, without ever opening PowerPoin
 
 # Downloading and Running
 
-The release for Ez PPT can be found [here.](https://github.com/BHolbs/Ez-PPT/tree/main/Ez-PPT/bin/Release)
+For your convenience, all required files to run the application are contained in a zip archive [here.](https://github.com/BHolbs/Ez-PPT/raw/main/Deploy/Ez-PPT%20Release.zip)
 
-**YOU MUST DOWNLOAD THE CONTENTS OF THE ENTIRE RELEASE FOLDER IN ORDER FOR EZ PPT TO RUN PROPERLY.** If you only download the executable, the application will crash when you search for images. 
-
-For your convenience, I've created a .zip archive containing everything in the Release folder, located [here.](https://drive.google.com/file/d/1yh2d0ID0DMNmpHMlJm7PLrtF7jMXz5fc/view?usp=sharing)
+Simply download and unpack the zip folder, then run `Ez-PPT.exe`.
