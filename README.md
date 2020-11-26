@@ -4,6 +4,7 @@ A WPF tool to scaffold a PowerPoint presentation, without ever opening PowerPoin
 # Requirements
 - .NET Framework 4.8
 - Some version of Microsoft PowerPoint installed.
+- Running on a Windows machine.
 
 # Downloading and Running
 
